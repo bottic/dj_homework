@@ -16,11 +16,11 @@ def bus_stations(request):
         station_dictreader = csv.DictReader(csvfile)
         station = [row for row in station_dictreader]
     page_number = int(request.GET.get('page', 1))
-    paginator = Paginator(station, 1)
+    paginator = Paginator(station, 10)
 
 
     context = {
-        'bus_stations': station,
+        'bus_stations': paginator.get_page(page_number),
         'page': paginator.get_page(page_number),
     }
     return render(request, 'stations/index.html', context)
