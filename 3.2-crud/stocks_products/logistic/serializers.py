@@ -11,17 +11,17 @@ class ProductSerializer(serializers.ModelSerializer):
 class ProductPositionSerializer(serializers.ModelSerializer):
     # настройте сериализатор для позиции продукта на складе
     product = serializers.IntegerField()
-    stock = serializers.IntegerField()
+    # stock = serializers.IntegerField()
     price = serializers.FloatField()
 
     class Meta:
         model = StockProduct
-        fields = ['id', 'stock', 'product', 'price', 'quantity']
+        fields = ['id', 'product', 'price', 'quantity']
 
 
 class StockSerializer(serializers.ModelSerializer):
-    address=serializers.CharField(max_length=100)
-    positions = ProductPositionSerializer(many=True, )
+    # address = serializers.CharField(max_length=100)
+    positions = ProductPositionSerializer(many=True, write_only=True)
 
     class Meta:
         model = Stock
@@ -39,7 +39,6 @@ class StockSerializer(serializers.ModelSerializer):
         # здесь вам надо заполнить связанные таблицы
         # в нашем случае: таблицу StockProduct
         # с помощью списка positions
-
         return stock
 
     def update(self, instance, validated_data):
@@ -49,11 +48,10 @@ class StockSerializer(serializers.ModelSerializer):
         # обновляем склад по его параметрам
         stock = super().update(instance, validated_data)
         for data_poss in positions:
-            StockProduct.objects.create(stock=stock, **data_poss)
+            StockProduct.objects.update(stock=stock, **data_poss)
         # здесь вам надо обновить связанные таблицы
         # в нашем случае: таблицу StockProduct
         # с помощью списка positions
-
         return
 
 
